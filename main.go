@@ -2,11 +2,20 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
+	"os"
+	"text/template"
 
 	"github.com/mauricioabreu/goplex4_12/xkcd"
 )
+
+var comicTemplate = template.Must(template.New("comic").Parse(`
+Number: {{.Num}}
+Title: {{.Title}}
+Image: {{.Img}}
+Transcript: {{.Transcript}}
+Link: {{.Link}}
+`))
 
 func main() {
 	var index bool
@@ -26,7 +35,10 @@ func main() {
 		}
 		results := xkcd.Search(query, comics)
 		for _, comic := range results {
-			fmt.Println(comic)
+			err = comicTemplate.Execute(os.Stdout, comic)
+			if err != nil {
+				log.Println(err)
+			}
 		}
 	}
 }

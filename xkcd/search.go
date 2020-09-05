@@ -14,7 +14,17 @@ func Search(query string, comics []*Comic) []*Comic {
 }
 
 func contains(query string, c *Comic) bool {
-	if strings.Contains(c.Title, query) {
+	lQuery := strings.ToLower(query)
+	if strings.Contains(strings.ToLower(c.Title), lQuery) {
+		return true
+	}
+	if strings.Contains(strings.ToLower(c.SafeTitle), lQuery) {
+		return true
+	}
+	if strings.Contains(strings.ToLower(c.Transcript), lQuery) {
+		return true
+	}
+	if strings.Contains(strings.ToLower(c.Alt), lQuery) {
 		return true
 	}
 
