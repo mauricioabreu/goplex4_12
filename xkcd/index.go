@@ -3,6 +3,7 @@ package xkcd
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"time"
@@ -26,7 +27,24 @@ func NewIndexer(dataPath, baseURL string, maxComics int) *Indexer {
 
 // Index index all comics
 func (i *Indexer) Index() {
+	var comics []*Comic
+	for c := 1; c <= i.MaxComics; c++ {
+		comic, err := i.Fetch(c)
+		fmt.Println(comic)
+		if err != nil {
+			log.Println(err)
+		}
+		comics = append(comics, comic)
+	}
 
+	comicsJSON, err := json.MarshalIndent(comics, "", "  ")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = ioutil.WriteFile(i.DataPath, comicsJSON, 0644)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Fetch get comic from xkcd site
@@ -47,8 +65,8 @@ func (i *Indexer) Fetch(id int) (*Comic, error) {
 	}
 	defer response.Body.Close()
 
-	if response.StatusCode != http.StatusCreated {
-		return nil, fmt.Errorf("failted to create issue: %s", response.Status)
+	if response.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("failed to fetch comic: %s", response.Status)
 	}
 
 	var comic Comic
