@@ -77,6 +77,20 @@ func (i *Indexer) Fetch(id int) (*Comic, error) {
 	return &comic, nil
 }
 
+// LoadComics load all comics in memory
+func (i *Indexer) LoadComics() ([]*Comic, error) {
+	var comics []*Comic
+	data, err := ioutil.ReadFile(i.DataPath)
+	if err != nil {
+		return nil, err
+	}
+	err = json.Unmarshal(data, &comics)
+	if err != nil {
+		return nil, err
+	}
+	return comics, nil
+}
+
 // URLForComic build a URL for the comic
 func (i *Indexer) URLForComic(id int) string {
 	return fmt.Sprintf("%s/%d/info.0.json", i.BaseURL, id)
