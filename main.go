@@ -20,11 +20,13 @@ Link: {{.Link}}
 func main() {
 	var index bool
 	var query string
+	var maxComics int
 	flag.BoolVar(&index, "index", false, "Index xkcd comics in a JSON file")
 	flag.StringVar(&query, "query", "", "Terms to search for comics")
+	flag.IntVar(&maxComics, "max_comics", 10, "How many comics you want to index?")
 	flag.Parse()
 
-	indexer := xkcd.NewIndexer("./data/comics.json", "https://xkcd.com", 10)
+	indexer := xkcd.NewIndexer("./data/comics.json", "https://xkcd.com", maxComics)
 
 	if index {
 		indexer.Index()
